@@ -1,9 +1,11 @@
+import Vue from 'vue'
+import App from './App'
+import Router from './router'
+import store from './store'
 import '@/styles/index.scss'
-import Image from '@/utils/Image'
-import Content from '@/utils/Content'
-import avatar from '@/assets/images/avatar.jpg'
 
-Content.append('h4', '我是插入的内容', 'app', {
-  className: 'common-title'
-})
-Image.createAvatar(avatar)
+new Vue({
+  store,
+  Router,
+  render: h => h(App)
+}).$mount('#app')

@@ -1,7 +1,7 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const { resolve } = require('./utils.js')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 const webpackConfig = {
   mode: 'development', // "production|development|none"
@@ -36,6 +36,10 @@ const webpackConfig = {
   },
   module: {
     rules: [  // array
+      {
+          test: /\.vue$/,
+          loader: 'vue-loader'
+      },
       {
         test: /\.svg$/,
         include: resolve('./src/icons/svg'),
@@ -88,12 +92,11 @@ const webpackConfig = {
       {
         test: /\.scss$/,
         use: [
-          'style-loader',
+          'vue-style-loader',
           {
             loader: 'css-loader',
             options: {
               importLoaders: 2,
-              modules: true
             }
           },
           'sass-loader', // 将sass编译为css
@@ -104,7 +107,7 @@ const webpackConfig = {
         test: /\.css$/,
         exclude: /(node_modules|bower_components)/,
         use:[
-          'style-loader',
+          'vue-style-loader',
           'css-loader'
         ]
       }
@@ -120,7 +123,7 @@ const webpackConfig = {
       将你定义的其他规则复制并应用到.vue文件里相应语言的块。
       例如，如果你有一条匹配 /\.js$/ 的规则，那么它会应用到 .vue 文件里的 <script> 块。
     */
-    // new VueLoaderPlugin(), 
+    new VueLoaderPlugin()
   ]
 }
 
