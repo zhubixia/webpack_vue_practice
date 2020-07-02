@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import App from './App.vue'
-import catImage from './assets/images/cat.jpg'
+import '@/styles/index.scss'
+import Image from '@/utils/Image'
+import Content from '@/utils/Content'
+import avatar from '@/assets/images/avatar.jpg'
 
-console.log('catImage:', catImage)
-
-new Vue({
-  render: h => h(App)
-}).$mount('#app')
+Content.append('h4', '我是插入的内容', 'app', {
+  className: 'common-title'
+})
+Image.createAvatar(avatar)

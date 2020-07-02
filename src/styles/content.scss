@@ -1,0 +1,19 @@
+
+$titleColor: #666;
+$titleLineHeight: 40px;
+$titleFontSize: 20px;
+$titleBgColor: #fff;
+
+@mixin setTitleStyle($color, $bgColor, $fontSize, $lineHeight) {
+  color: $color;
+  background: $bgColor;
+  font-size: $fontSize;
+  height: $lineHeight;
+  line-height: $lineHeight;
+}
+
+:global{
+  .common-title{
+    @include setTitleStyle($titleColor, $titleBgColor, $titleFontSize, $titleLineHeight)
+  }
+}

@@ -1,19 +1,35 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const { resolve } = require('./utils.js')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+// const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const webpackConfig = {
   mode: 'development', // "production|development|none"
+  // development devtool: 'cheap-module-eval-source-map',
+	// production devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-eval-source-map', // 源码映射关系，当代码出错时可映射到源码进行快速修改，具体的构建速度可参考官网
   entry: {  // string|object|array
     main: './src/main.js'
   },
   output: {
     filename: 'static/js/[name]_[chunkhash:12].js',
-    path: resolve('dist')
+    path: resolve('dist'),
+  },
+  devServer: {
+    contentBase: resolve('dist'),
+    open: true,
+    port: 9090,
+    proxy: { // 模拟接口代理实现跨域
+      '/api': {
+        target: 'localhost: 3000',
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    }
   },
   resolve: {
-    extensions: ['js', 'vue', 'json'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       '@': resolve('src')
     }
@@ -32,7 +48,10 @@ const webpackConfig = {
       },
       {
         test: /\.(svg)(\?.*)$/,
-        exclude: resolve('./src/icons/svg'),
+        exclude: [
+          resolve('./src/icons/svg'),
+          resolve('node_modules')
+        ],
         use: {
           loader: 'file-loader',
           options: {
@@ -47,18 +66,14 @@ const webpackConfig = {
         /* loaders list<Array>, multiple loaders will be applied from right to left (last to first configured) */
         use: [
           {
-            loader: 'file-loader',
+            loader: 'url-loader',
             options: {
               name: '[name]_[hash:8].[ext]',
               outputPath: 'static/images/',
+					    limit: 10240
             }
           }
         ]
-      },
-      {
-        test: /\.vue$/,
-        include: [resolve('src')],
-        loader: 'vue-loader', // loader的写法有上面用use的loader列表和单个loader
       },
       {
         test: /\.js$/,
@@ -73,16 +88,23 @@ const webpackConfig = {
       {
         test: /\.scss$/,
         use: [
-          'vue-style-loader',
-          'css-loader', // 将css转化为CommonJs模块
-          'sass-loader' // 将sass编译为css
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              modules: true
+            }
+          },
+          'sass-loader', // 将sass编译为css
+				  'postcss-loader' // 加入厂商前缀
         ]
       },
       {
         test: /\.css$/,
         exclude: /(node_modules|bower_components)/,
         use:[
-          'vue-style-loader',
+          'style-loader',
           'css-loader'
         ]
       }
@@ -98,7 +120,7 @@ const webpackConfig = {
       将你定义的其他规则复制并应用到.vue文件里相应语言的块。
       例如，如果你有一条匹配 /\.js$/ 的规则，那么它会应用到 .vue 文件里的 <script> 块。
     */
-    new VueLoaderPlugin(), 
+    // new VueLoaderPlugin(), 
   ]
 }
 
